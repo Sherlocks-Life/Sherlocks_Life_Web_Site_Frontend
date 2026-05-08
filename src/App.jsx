@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+
 import MainLayout from './components/layout/MainLayout';
 import Home from './pages/Home/Home';
 import SubsidyForm from './pages/Form/Subsidy_Form';
@@ -15,16 +16,19 @@ import AdminSubsidies from './pages/Admin/Subsidies';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('adminToken');
-  if (!token) return <Navigate to="/admin/login" replace />;
 
-  // Validate token expiry
+  if (!token) {
+    return <Navigate to="/admin/login" replace />;
+  }
+
   try {
     const payload = JSON.parse(atob(token));
+
     if (!payload.exp || Date.now() > payload.exp) {
       localStorage.removeItem('adminToken');
       return <Navigate to="/admin/login" replace />;
     }
-  } catch {
+  } catch (error) {
     localStorage.removeItem('adminToken');
     return <Navigate to="/admin/login" replace />;
   }
@@ -38,29 +42,59 @@ const App = () => {
   return (
     <>
       <AnimatePresence>
-        {isLoading && <Loading onComplete={() => setIsLoading(false)} />}
+        {isLoading && (
+          <Loading onComplete={() => setIsLoading(false)} />
+        )}
       </AnimatePresence>
 
-      <BrowserRouter>
-        <Routes>
-          {/* Main Website */}
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Home />} />
-            <Route path="subsidy-form" element={<SubsidyForm />} />
-          </Route>
+      {!isLoading && (
+        <BrowserRouter>
+          <Routes>
 
-          {/* Admin Panel */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
-            <Route index element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="contacts" element={<AdminContacts />} />
-            <Route path="subsidies" element={<AdminSubsidies />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+            {/* Main Website */}
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<Home />} />
+              <Route path="subsidy-form" element={<SubsidyForm />} />
+            </Route>
+
+            {/* Admin Login */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+
+            {/* Protected Admin Routes */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route
+                index
+                element={<Navigate to="/admin/dashboard" replace />}
+              />
+
+              <Route
+                path="dashboard"
+                element={<AdminDashboard />}
+              />
+
+              <Route
+                path="contacts"
+                element={<AdminContacts />}
+              />
+
+              <Route
+                path="subsidies"
+                element={<AdminSubsidies />}
+              />
+            </Route>
+
+          </Routes>
+        </BrowserRouter>
+      )}
     </>
-  )
-}
+  );
+};
 
-export default App; 
+export default App;
