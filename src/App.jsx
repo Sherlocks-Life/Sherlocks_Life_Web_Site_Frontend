@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
 import MainLayout from './components/layout/MainLayout';
@@ -33,35 +33,33 @@ const App = () => {
         {isLoading && <Loading onComplete={() => setIsLoading(false)} />}
       </AnimatePresence>
 
-      <BrowserRouter>
-        <Routes>
+      <Routes>
 
-          {/* 🌐 MAIN WEBSITE */}
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Home />} />
-            <Route path="subsidy-form" element={<SubsidyForm />} />
-          </Route>
+        {/* 🌐 MAIN WEBSITE */}
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="subsidy-form" element={<SubsidyForm />} />
+        </Route>
 
-          {/* 🔐 ADMIN LOGIN (public) */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+        {/* 🔐 ADMIN LOGIN (public) */}
+        <Route path="/admin/login" element={<AdminLogin />} />
 
-          {/* 🔒 ADMIN PANEL (protected) */}
-          <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+        {/* 🔒 ADMIN PANEL (protected) */}
+        <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
 
-            {/* default redirect */}
-            <Route index element={<Navigate to="dashboard" replace />} />
+          {/* default redirect */}
+          <Route index element={<Navigate to="dashboard" replace />} />
 
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="contacts" element={<AdminContacts />} />
-            <Route path="subsidies" element={<AdminSubsidies />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="contacts" element={<AdminContacts />} />
+          <Route path="subsidies" element={<AdminSubsidies />} />
 
-          </Route>
+        </Route>
 
-          {/* fallback */}
-          <Route path="*" element={<Navigate to="/" />} />
+        {/* fallback */}
+        <Route path="*" element={<Navigate to="/" />} />
 
-        </Routes>
-      </BrowserRouter>
+      </Routes>
     </>
   );
 };
