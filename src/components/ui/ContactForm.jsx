@@ -64,9 +64,26 @@ const ContactForm = ({ isOpen, onClose, onSuccess }) => {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      // Backend may return JSON, or may return text/HTML for errors (e.g., wrong route)
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (jsonErr) {
+        // ignore, we'll fall back to text below
+      }
 
-      if (data.success) {
+      if (!response.ok) {
+        const fallbackText = data?.message
+          ? data.message
+          : await response.text().catch(() => '');
+
+        throw new Error(
+          fallbackText ||
+            `Failed to send (HTTP ${response.status}).`
+        );
+      }
+
+      if (data?.success) {
         setStatus('success');
         setToastMsg('Message sent successfully!');
 
@@ -80,12 +97,20 @@ const ContactForm = ({ isOpen, onClose, onSuccess }) => {
           setStatus('idle');
         }, 1500);
       } else {
-        throw new Error(data.message || 'Failed to send');
+        const msg = data?.message || 'Failed to send';
+        throw new Error(msg);
       }
     } catch (err) {
       console.error('Contact Submit Error:', err);
       setStatus('error');
-      setToastMsg('Failed to send. Please try again.');
+
+      const msg =
+        err?.message ||
+        (typeof err === 'string' ? err : null) ||
+        'Failed to send. Please try again.';
+
+      setToastMsg(msg);
+
       setTimeout(() => {
         setStatus('idle');
         setToastMsg(null);
