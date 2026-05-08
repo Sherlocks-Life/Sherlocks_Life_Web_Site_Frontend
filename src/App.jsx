@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import MainLayout from './components/layout/MainLayout';
 import Home from './pages/Home/Home';
@@ -41,7 +41,8 @@ const App = () => {
         {isLoading && <Loading onComplete={() => setIsLoading(false)} />}
       </AnimatePresence>
 
-      <Routes>
+      <BrowserRouter>
+        <Routes>
           {/* Main Website */}
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
@@ -57,8 +58,9 @@ const App = () => {
             <Route path="subsidies" element={<AdminSubsidies />} />
           </Route>
         </Routes>
+      </BrowserRouter>
     </>
   )
 }
 
-export default App;   
+export default App; 
