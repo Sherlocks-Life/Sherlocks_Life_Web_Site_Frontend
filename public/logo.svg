@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120" width="500" height="120">
+    <defs>
+        <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4f46e5" />
+            <stop offset="100%" stop-color="#3b82f6" />
+        </linearGradient>
+        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#4f46e5" flood-opacity="0.3"/>
+        </filter>
+    </defs>
+    
+    <!-- Shield Icon -->
+    <g transform="translate(10, 10)" filter="url(#shadow)">
+        <path d="M40 0 L80 15 L80 50 C80 80 60 100 40 105 C20 100 0 80 0 50 L0 15 Z" fill="url(#shieldGrad)" />
+        <path d="M25 50 L35 60 L55 35" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+    
+    <!-- Text -->
+    <text x="115" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="800" font-size="48" fill="#0f172a" letter-spacing="-1">
+        Sherlock's <tspan fill="#4f46e5">Life</tspan>
+    </text>
+</svg>

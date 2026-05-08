@@ -1,0 +1,6 @@
+- [x] Update src/components/ui/ContactModal.jsx to use backend nodemailer endpoint (with VITE_BACKEND_URL fallback)
+- [ ] Add backend dependencies to package.json (express, nodemailer, cors, dotenv)
+- [ ] npm install to install backend deps
+- [ ] Start backend: npm run server
+- [ ] Test POST /api/send-email with curl (happy path)
+- [ ] Run full stack test: open frontend and submit contact form once (confirm success/error toast)
