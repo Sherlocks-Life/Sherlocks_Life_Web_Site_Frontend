@@ -8,4 +8,15 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    // Speed up Vercel builds and reduce output size
+    sourcemap: false,
+    // Keep output split to avoid single huge chunks (also reduces Vercel CPU time)
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
 })
