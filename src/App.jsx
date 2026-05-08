@@ -1,26 +1,36 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
+// Layouts
 import MainLayout from './components/layout/MainLayout';
+import AdminLayout from './pages/Admin/Layout';
+
+// Main Pages
 import Home from './pages/Home/Home';
 import SubsidyForm from './pages/Form/Subsidy_Form';
-import Loading from './components/ui/Loading';
 
 // Admin Pages
 import AdminLogin from './pages/Admin/Login';
-import AdminLayout from './pages/Admin/Layout';
 import AdminDashboard from './pages/Admin/Dashboard';
 import AdminContacts from './pages/Admin/Contacts';
 import AdminSubsidies from './pages/Admin/Subsidies';
 
+// 🔒 Protected Route
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('adminToken');
 
+  // No token
   if (!token) {
     return <Navigate to="/admin/login" replace />;
   }
 
+  // Validate token expiry
   try {
     const payload = JSON.parse(atob(token));
 
@@ -37,62 +47,49 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   return (
     <>
-      <AnimatePresence>
-        {isLoading && (
-          <Loading onComplete={() => setIsLoading(false)} />
-        )}
+      <AnimatePresence mode="wait">
+        {loading && <Loading />}
       </AnimatePresence>
 
-      {!isLoading && (
-        <BrowserRouter>
-          <Routes>
+      <BrowserRouter>
+        <Routes>
+          {/* 🌐 Main Website */}
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="subsidy-form" element={<SubsidyForm />} />
+          </Route>
 
-            {/* Main Website */}
-            <Route path="/" element={<MainLayout />}>
-              <Route index element={<Home />} />
-              <Route path="subsidy-form" element={<SubsidyForm />} />
-            </Route>
+          {/* 🔑 Admin Login */}
+          <Route path="/admin/login" element={<AdminLogin />} />
 
-            {/* Admin Login */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-
-            {/* Protected Admin Routes */}
+          {/* 🔒 Protected Admin Routes */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            {/* Redirect /admin → /admin/dashboard */}
             <Route
-              path="/admin"
-              element={
-                <ProtectedRoute>
-                  <AdminLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route
-                index
-                element={<Navigate to="/admin/dashboard" replace />}
-              />
+              index
+              element={<Navigate to="/admin/dashboard" replace />}
+            />
 
-              <Route
-                path="dashboard"
-                element={<AdminDashboard />}
-              />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="contacts" element={<AdminContacts />} />
+            <Route path="subsidies" element={<AdminSubsidies />} />
+          </Route>
 
-              <Route
-                path="contacts"
-                element={<AdminContacts />}
-              />
-
-              <Route
-                path="subsidies"
-                element={<AdminSubsidies />}
-              />
-            </Route>
-
-          </Routes>
-        </BrowserRouter>
-      )}
+          {/* ❌ 404 Page Redirect */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 };
